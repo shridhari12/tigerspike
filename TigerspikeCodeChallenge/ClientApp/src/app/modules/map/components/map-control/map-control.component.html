@@ -1,0 +1,36 @@
+<div class="map-control">
+    <div class="map-control-header">Tracker Map</div>
+    <div class="map-control-details">
+        <agm-map
+         [latitude]="lat"
+         [longitude]="lng"
+         [zoom]="zoom"
+         (mapClick)="mapClickHandler($event)"
+         [disableDefaultUI]="false"
+         [mapTypeId]="mapTypeId"
+        >
+        
+        <agm-marker
+         *ngFor="let marker of markers; let i = index"
+         [latitude]="marker.lat"
+         [longitude]="marker.lng"
+         (markerClick)="markerClickHandler()"
+         (markerDraggable)="marker.draggable"
+         [label]="marker.label">
+         <div>
+            <p>{{ marker | json }}</p>
+        </div>
+            <agm-info-window>
+                <strong>
+                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
+                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
+                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
+                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
+                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+                </strong>
+            </agm-info-window>
+        </agm-marker>
+        </agm-map>
+        
+    </div>
+</div>
