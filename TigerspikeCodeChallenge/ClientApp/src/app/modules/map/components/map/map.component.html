@@ -1,0 +1,12 @@
+<div class="map-container">
+    <li *ngFor="let usr of users">
+
+    </li>
+    <div *ngIf="showMap; else showMapInfo">
+        <app-map-control [mapPoints]="mapDataPoints"></app-map-control>
+    </div>
+</div>
+
+<ng-template #showMapInfo>
+    <p>Please do something else in place of the Map</p>
+</ng-template>

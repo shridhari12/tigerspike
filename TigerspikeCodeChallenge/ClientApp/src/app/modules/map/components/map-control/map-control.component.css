@@ -1,0 +1,6 @@
+agm-map {
+    border: 1px solid black;
+    height: 500px !important;
+    width: 70%;
+    box-sizing: border-box;
+}
