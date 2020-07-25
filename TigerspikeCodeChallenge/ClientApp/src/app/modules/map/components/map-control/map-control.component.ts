@@ -29,15 +29,19 @@ export class MapControlComponent implements OnInit, AfterViewInit {
 
   mapToUserInfo(data: Array<UserInfo>) {
     let userLocationData = [];
-    userLocationData = data.map<UserInfo>(d => {
-      return {
-        locationLat: d.locationLat,
-        locationLng: d.locationLng
-      };
+    data.forEach(d => {
+      userLocationData = d.userLocations.map(loc => {
+        return {
+          locationLat: loc.locationLat,
+          locationLng: loc.locationLng
+        };
+      });
     });
     this.mapPoints.map((mapPoint, i) => {
-      const markerLabel = `Default Label ${i}`;
-      this.addMapMarker(mapPoint.locationLat, mapPoint.locationLng, markerLabel);
+      const markerLabel = `User # ${mapPoint.userId || 'No User'}`;
+      mapPoint.userLocations.map(usrLoc => {
+        this.addMapMarker(usrLoc.locationLat, usrLoc.locationLng, markerLabel);
+      });
     });
   }
 

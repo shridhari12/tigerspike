@@ -1,8 +1,7 @@
+import { UserLocation } from './user-location.model';
+
 export interface UserInfo {
     userId?: string;
-    lastUpdateDatetime?: string;
-    locationLat: number;
-    locationLng: number;
-    notes?: string;
+    userLocations: Array<UserLocation>;
 }
 
