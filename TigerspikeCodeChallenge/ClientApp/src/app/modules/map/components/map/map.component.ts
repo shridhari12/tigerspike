@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UserInfo } from '../../models/user-info.model';
 import { ModuleMapNgFactoryLoader } from '@nguniversal/module-map-ngfactory-loader';
+import { UserLocation } from '../../models/user-location.model';
 
 @Component({
   selector: 'app-map',
@@ -20,9 +21,12 @@ export class MapComponent implements OnInit {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((pos) => {
         if (pos) {
-          const currentUserInfo: UserInfo = {
+          const currentUserLocation: UserLocation = {
             locationLat: pos.coords.latitude,
             locationLng: pos.coords.longitude
+          };
+          const currentUserInfo: UserInfo = {
+            userLocations: [ currentUserLocation ]
           };
           // const currentUserInfo: UserInfo = {
           //   locationLat: -27.588730,
