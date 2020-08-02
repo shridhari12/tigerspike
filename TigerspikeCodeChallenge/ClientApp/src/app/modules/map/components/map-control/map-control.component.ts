@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { MouseEvent, AgmMap } from '@agm/core';
 import { Marker } from '../../models/marker.model';
-import { UserInfo } from '../../models/user-info.model';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-map-control',
@@ -10,43 +10,77 @@ import { UserInfo } from '../../models/user-info.model';
 })
 export class MapControlComponent implements OnInit, AfterViewInit {
   @ViewChild(AgmMap, {static: true}) map: AgmMap;
-  @Input() mapPoints: Array<UserInfo>;
-
+  @Input() mapPoints: Array<Marker>;
+  @Output() mapPointClick = new EventEmitter<Marker>();
+  showMarkerOptions = false;
   infoContent = '';
   mapTypeId = 'hybrid';
   markers: Array<Marker> = [];
   zoom = 12;
-
-  constructor() { }
+  showNote = false;
+  addNoteForm: FormGroup;
+  selectedMarker: Marker;
+  noteButtonText: string;
+  constructor(
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit() {
-    this.mapToUserInfo(this.mapPoints);
+    this.plotDataPointsInMap();
+    this.buildNoteForm();
+  }
+
+  buildNoteForm() {
+    this.addNoteForm = this.formBuilder.group({
+      notes: new FormControl('')
+    });
   }
 
   ngAfterViewInit() {
     console.log('[map-control][ngAfterViewInit]');
   }
 
-  mapToUserInfo(data: Array<UserInfo>) {
-    let userLocationData = [];
-    data.forEach(d => {
-      userLocationData = d.userLocations.map(loc => {
-        return {
-          locationLat: loc.locationLat,
-          locationLng: loc.locationLng
-        };
-      });
-    });
+  plotDataPointsInMap() {
     this.mapPoints.map((mapPoint, i) => {
-      const markerLabel = `User # ${mapPoint.userId || 'No User'}`;
-      mapPoint.userLocations.map(usrLoc => {
-        this.addMapMarker(usrLoc.locationLat, usrLoc.locationLng, markerLabel);
-      });
+      // this.addMapMarker(mapPoint.userId, mapPoint.locationId, mapPoint.lat, 
+      //   mapPoint.lng, mapPoint.label, mapPoint.notes);
+      this.addMapMarker(mapPoint);
     });
   }
 
-  markerClickHandler(label: string, index: number) {
-    console.log(`clicked the marker: ${label || index}`);
+  markerClickHandler(marker: Marker) {
+    // console.log(`clicked the marker: ${label || index}`);
+    console.log('clicked marker id # ', marker);
+    this.showMarkerOptions = !this.showMarkerOptions;
+    this.selectedMarker = marker;
+    this.setMarkerData();
+    // this.mapPointClick.emit(marker);
+  }
+
+  getSelectedMarkerAddress() {
+    const selectedMarkerAddress = this.selectedMarker.address;
+    if (selectedMarkerAddress) {
+      return `${selectedMarkerAddress.addressLine1} 
+       ${selectedMarkerAddress.addressLine2} 
+       ${selectedMarkerAddress.suburb} 
+       ${selectedMarkerAddress.state} 
+       ${selectedMarkerAddress.country} 
+       ${selectedMarkerAddress.postcode}`;
+    }
+    return 'No address provided';
+  }
+
+  setMarkerData() {
+    if (this.selectedMarker.notes != null) {
+      this.noteButtonText = 'EDIT NOTES';
+      this.addNoteForm.get('notes').patchValue(this.selectedMarker.notes);
+    } else {
+      this.noteButtonText = 'ADD NOTES';
+    }
+  }
+
+  isInfoWindowOpen(markerId: number) {
+    console.log('[isInfoWindowOpen][marker.id] ', markerId);
   }
 
   mapClickHandler(event: MouseEvent) {
@@ -57,14 +91,46 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addMapMarker(markerLat: number, markerLng: number, markerLabel: string) {
-    const mapMarker: Marker = {
-      label: markerLabel,
-      lat: markerLat,
-      lng: markerLng,
-      draggable: false
-    };
-    this.markers.push(mapMarker);
+  addMapMarker(marker: Marker) {
+    // const mapMarker: Marker = {
+    //   userId: userId,
+    //   locationId: locationId,
+    //   label: markerLabel,
+    //   lat: markerLat,
+    //   lng: markerLng,
+    //   draggable: false,
+    //   notes: notes
+    // };
+    // this.markers.push(mapMarker);
+    this.markers.push({...marker});
+    if (marker.isCurrentLocation) {
+      this.addNote();
+    }
+  }
+
+  addNote() {
+    this.showNote = !this.showNote;
+  }
+
+  // saveNoteHandler() {
+  //   this.saveNotesforCurrentLocation();
+  // }
+
+  // saveNotesforCurrentLocation() {
+  //   const notes = this.addNoteForm.get('notes').value;
+  //   this.selectedMarker.notes = notes;
+  //   this.showNote = false;
+  //   this.showMarkerOptions = false;
+  //   this.mapPointClick.emit(this.selectedMarker);
+  // }
+
+  saveCurrentLocationHandler() {
+    console.log('[map-control][saveCurrentLocationHandler]');
+    const notes = this.addNoteForm.get('notes').value;
+    this.selectedMarker.notes = notes;
+    this.showNote = false;
+    this.showMarkerOptions = false;
+    this.mapPointClick.emit(this.selectedMarker);
   }
 
 }

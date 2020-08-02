@@ -1,12 +1,19 @@
-<div class="map-container">
-    <li *ngFor="let usr of users">
-
-    </li>
-    <div *ngIf="showMap; else showMapInfo">
-        <app-map-control [mapPoints]="mapDataPoints"></app-map-control>
+<div class="map-container"><!-- *ngIf-="showMap; else otherMapInfo"> -->
+    <div class="map-header">
+        <strong>View {{ mapData.username }} locations on map</strong>
+    </div>
+    <div><!-- *ngIf="showMap; else showMapInfo"> -->
+        <app-map-control [mapPoints]="mapDataPoints" (mapPointClick)="mapPointClickHandler($event)"></app-map-control>
+        <!-- <app-map-control [mapPoints]="mapDataPoints"></app-map-control> -->
     </div>
 </div>
 
-<ng-template #showMapInfo>
+<ng-template #otherMapInfo>
     <p>Please do something else in place of the Map</p>
+    <!-- <div class="add-location">
+        <button (click)="addLocationHandler()">ADD LOCATION</button>
+    </div>
+    <div class="add-map-location">
+        <add-user-location></add-user-location>
+    </div> -->
 </ng-template>

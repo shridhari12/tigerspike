@@ -1,0 +1,79 @@
+<div class="user-location">
+    <div class="current-location" *ngIf="isCurrent">
+        <h4>Current Location</h4>
+    </div>
+    <div class="user-location-form form-group">
+        <form [formGroup]="userLocationForm" (ngSubmit)="addLocationHandler()" class="form">
+            <div class="form-element">
+                <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                    <mat-label>Address Line1 *</mat-label>
+                    <input matInput #input placeholder="Please enter address line 1 here" formControlName="addressLine1">
+                    <mat-hint align="end">{{ input.value?.length || 0}}/120</mat-hint>
+                    <mat-error
+                        *ngIf="!userLocationForm.controls['addressLine1'].valid && userLocationForm.controls['addressLine1'].touched">
+                        Required field, must not be more than 120 characters.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="form-element">
+                <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                    <mat-label>Address Line 2*</mat-label>
+                    <input matInput #input placeholder="Please enter address line 2 here" formControlName="addressLine2">
+                    <mat-hint align="end">{{ input.value?.length || 0}}/120</mat-hint>
+                    <mat-error
+                        *ngIf="!userLocationForm.controls['addressLine2'].valid && userLocationForm.controls['addressLine2'].touched">
+                        Required field, must not be more than 120 characters.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="form-element">
+                <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                    <mat-label>Suburb *</mat-label>
+                    <input matInput #input placeholder="Please enter suburb here" formControlName="suburb">
+                    <mat-hint align="end">{{ input.value?.length || 0}}/120</mat-hint>
+                    <mat-error
+                        *ngIf="!userLocationForm.controls['suburb'].valid && userLocationForm.controls['suburb'].touched">
+                        Required field, must not be more than 120 characters.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="form-element">
+                <mat-form-field class="form-element">
+                    <mat-label>State *</mat-label>
+                    <mat-select formControlName="state" [(ngModel)]="selectedStateCode">
+                      <mat-option *ngFor="let option of stateOptions" [value]="option.stateCode">
+                        {{ option.stateName }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+            <div class="form-element">
+                <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                    <mat-label>Postcode *</mat-label>
+                    <input matInput #input placeholder="Please enter postcode here" formControlName="postcode">
+                    <mat-hint align="end">{{ input.value?.length || 0}}/120</mat-hint>
+                    <mat-error
+                        *ngIf="!userLocationForm.controls['postcode'].valid && userLocationForm.controls['postcode'].touched">
+                        Required field, must not be more than 120 characters.
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="form-element">
+                <mat-form-field class="form-element">
+                    <mat-label>Country of residence *</mat-label>
+                    <mat-select formControlName="country" [(ngModel)]="selectedCountry">
+                      <mat-option *ngFor="let option of countryOptions" [value]="option" >
+                        {{ option.countryName }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+            <div class="form-element">
+                <button mat-raised-button color="primary" type="submit" class="button"
+                    [disabled]="!userLocationForm.valid">
+                    SAVE LOCATION
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

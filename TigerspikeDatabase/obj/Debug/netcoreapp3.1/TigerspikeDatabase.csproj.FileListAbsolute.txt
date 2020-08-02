@@ -1,0 +1,11 @@
+C:\tigerspike\TigerspikeDatabase\bin\Debug\netcoreapp3.1\TigerspikeDatabase.deps.json
+C:\tigerspike\TigerspikeDatabase\bin\Debug\netcoreapp3.1\TigerspikeDatabase.runtimeconfig.json
+C:\tigerspike\TigerspikeDatabase\bin\Debug\netcoreapp3.1\TigerspikeDatabase.runtimeconfig.dev.json
+C:\tigerspike\TigerspikeDatabase\bin\Debug\netcoreapp3.1\TigerspikeDatabase.dll
+C:\tigerspike\TigerspikeDatabase\bin\Debug\netcoreapp3.1\TigerspikeDatabase.pdb
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.AssemblyInfoInputs.cache
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.AssemblyInfo.cs
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.csproj.CoreCompileInputs.cache
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.dll
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.pdb
+C:\tigerspike\TigerspikeDatabase\obj\Debug\netcoreapp3.1\TigerspikeDatabase.genruntimeconfig.cache
