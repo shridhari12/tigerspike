@@ -1,0 +1,31 @@
+<div class="user-location-notes">
+    <div class="show-location-notes">
+        <div class="location-notes" *ngFor="let note of notes">
+            <p>{{ note }}</p>
+        </div>
+    </div>
+    <div class="add-location-note">
+        <button (click)="addNote()">ADD NOTE FOR CURRENT LOCATION</button>
+        <div class="show-note" *ngIf="showNote">
+            <form [formGroup]="addNoteForm" (ngSubmit)="saveNoteHandler()" class="form">
+                <div class="form-element">
+                    <!-- <label for="notes">Notes</label>
+                                        <input type = "text" name = "notes" placeholder = "Please enter the notes here" id="notes" formControlName="notes" > -->
+                    <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                        <mat-label>Notes *</mat-label>
+                        <input matInput #input placeholder="Enter notes here" formControlName="notes">
+                        <mat-hint align="end">{{ input.value?.length || 0}}/50</mat-hint>
+                        <mat-error *ngIf="!addNoteForm.controls['notes'].valid && addNoteForm.controls['notes'].touched">
+                            Required field, must not be more than 50 characters.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="form-element">
+                    <button mat-raised-button color="primary" type="submit" class="button" [disabled]="!addNoteForm.valid">
+                        SAVE NOTE
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

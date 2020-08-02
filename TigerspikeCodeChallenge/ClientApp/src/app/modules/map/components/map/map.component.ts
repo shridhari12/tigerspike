@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { UserInfo } from '../../models/user-info.model';
-import { ModuleMapNgFactoryLoader } from '@nguniversal/module-map-ngfactory-loader';
-import { UserLocation } from '../../models/user-location.model';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { MapData } from '../../models/map-data.model';
+import { Marker } from '../../models/marker.model';
 
 @Component({
   selector: 'app-map',
@@ -9,39 +9,53 @@ import { UserLocation } from '../../models/user-location.model';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  @Input() showMap = false;
-  mapDataPoints: Array<UserInfo> = [];
-  constructor() { }
+  // @Input() showMap = false;
+  @Input() mapData: MapData;
+  @Output() mapClick = new EventEmitter<Marker>();
+  mapDataPoints: Array<Marker> = [];
+  showNote = false;
+  addNoteForm: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit() {
-    this.getCurrentGeoPosition();
+    // this.getCurrentGeoPosition();
+    // this.buildAddNoteForm();
+    this.showMapPoints();
   }
 
-  getCurrentGeoPosition() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        if (pos) {
-          const currentUserLocation: UserLocation = {
-            locationLat: pos.coords.latitude,
-            locationLng: pos.coords.longitude
-          };
-          const currentUserInfo: UserInfo = {
-            userLocations: [ currentUserLocation ]
-          };
-          // const currentUserInfo: UserInfo = {
-          //   locationLat: -27.588730,
-          //   locationLng: 153.050150,
-          //   notes: 'This is the current user location notes'
-          // };
-          this.mapDataPoints.push(currentUserInfo);
-          this.showMapComponent();
-        }
-      });
-    }
+  // buildAddNoteForm() {
+  //   this.addNoteForm = this.formBuilder.group({
+  //     notes: new FormControl('')
+  //   });
+  // }
+
+  showMapPoints() {
+    // this.getCurrentGeoPosition();
+    this.mapDataPoints = [ ...this.mapData.dataPoints ];
   }
 
-  showMapComponent() {
-    this.showMap = !this.showMap;
+  // showMapComponent() {
+  //   this.showMap = !this.showMap;
+  // }
+
+  addNote() {
+    this.showNote = !this.showNote;
+  }
+
+  // saveNoteHandler() {
+  //   this.saveNotesforCurrentLocation();
+  // }
+
+  // saveNotesforCurrentLocation() {
+  //   const notes = this.addNoteForm.get('notes').value;
+  // }
+
+  mapPointClickHandler(marker: Marker) {
+    console.log('[map][mapPointClickHandler] ', marker);
+    this.mapClick.emit(marker);
   }
 
 }

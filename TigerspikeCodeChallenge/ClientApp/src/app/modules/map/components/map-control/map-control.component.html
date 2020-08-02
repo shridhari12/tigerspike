@@ -1,36 +1,75 @@
 <div class="map-control">
     <div class="map-control-header">Tracker Map</div>
-    <div class="map-control-details">
-        <agm-map
-         [latitude]="lat"
-         [longitude]="lng"
-         [zoom]="zoom"
-         (mapClick)="mapClickHandler($event)"
-         [disableDefaultUI]="false"
-         [mapTypeId]="mapTypeId"
-        >
-        
-        <agm-marker
-         *ngFor="let marker of markers; let i = index"
-         [latitude]="marker.lat"
-         [longitude]="marker.lng"
-         (markerClick)="markerClickHandler()"
-         (markerDraggable)="marker.draggable"
-         [label]="marker.label">
-         <div>
-            <p>{{ marker | json }}</p>
+    <div class="map-control-container">
+        <div class="map-control-details">
+            <agm-map
+             [latitude]="lat"
+             [longitude]="lng"
+             [zoom]="zoom"
+             (mapClick)="mapClickHandler($event)"
+             [disableDefaultUI]="false"
+             [mapTypeId]="mapTypeId"
+            >
+            
+            <agm-marker
+             *ngFor="let marker of markers; let i = index"
+             [latitude]="marker.lat"
+             [longitude]="marker.lng"
+             (markerClick)="markerClickHandler(marker)"
+             (markerDraggable)="marker.draggable"
+             [label]="marker.label">
+             <div>
+                <p>{{ marker | json }}</p>
+            </div>
+                <agm-info-window
+                 [isOpen]="isInfoWindowOpen(marker.id)"
+                 [latitude]="marker.lat"
+                 [longitude]="marker.lng">
+                    <strong>
+                        Notes: {{ marker.notes }}
+                    </strong>
+                </agm-info-window>
+            </agm-marker>
+            </agm-map>
         </div>
-            <agm-info-window>
-                <strong>
-                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                    Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                </strong>
-            </agm-info-window>
-        </agm-marker>
-        </agm-map>
-        
+        <div class="map-marker-actions" *ngIf="showMarkerOptions">
+            <div class="marker-location-details">
+                <p>Selected Marker ==> {{ selectedMarker | json}}</p>
+                <h4>Location Details</h4>
+                <!-- <strong>Latitude: {{ selectedMarker.lat }}</strong>
+                <strong>Longitude: {{ selectedMarker.lng }}</strong>
+                <strong>Address: {{ getSelectedMarkerAddress() }}</strong>
+                <strong>Please save the current location to be able to add notes</strong> -->
+                <div class="marker-location-info">
+                    <mat-label>Latitude: {{ selectedMarker.lat }}</mat-label>
+                    <mat-label>Longitude: {{ selectedMarker.lng }}</mat-label>
+                    <mat-label>Address: {{ getSelectedMarkerAddress() }}</mat-label>
+                </div>
+                <div class="marker-location-notes">
+                    <label>{{selectedMarker?.notes || 'No notes added. Please click below button to add it' }}</label>
+                    <button mat-raised-button color="primary" class="button" *ngIf="!showNote" (click)="addNote()">{{noteButtonText}}</button>
+                    <div class="show-note" *ngIf="showNote">
+                        <form [formGroup]="addNoteForm" (ngSubmit)="saveCurrentLocationHandler()" class="form">
+                            <div class="form-element">
+                                <mat-form-field class="form-element" hintLabel="Max 120 characters">
+                                    <mat-label>Notes *</mat-label>
+                                    <input matInput #input placeholder="Enter notes here" formControlName="notes">
+                                    <mat-hint align="end">{{ input.value?.length || 0}}/50</mat-hint>
+                                    <mat-error *ngIf="!addNoteForm.controls['notes'].valid && addNoteForm.controls['notes'].touched">
+                                        Required field, must not be more than 50 characters.
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="form-element">
+                                <button mat-raised-button color="primary" type="submit" class="button" [disabled]="!addNoteForm.valid">
+                                    SAVE CURRENT LOCATION
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- <button mat-raised-button color="primary" class="button" (click)="saveCurrentLocationHandler()">SAVE CURRENT LOCATION</button> -->
+            </div>
+        </div>
     </div>
 </div>

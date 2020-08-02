@@ -4,3 +4,43 @@ agm-map {
     width: 70%;
     box-sizing: border-box;
 }
+
+.map-control {
+    display: flex;
+    flex-flow: column wrap;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+.map-control-header {
+    width: 100%;
+}
+
+.map-control-container {
+    display: flex;
+    flex-direction: row wrap;
+    width: 100%;
+}
+
+.map-control-details {
+    width: 70%;
+}
+
+.map-marker-actions {
+    width: 30%;
+}
+
+.marker-location-notes {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.marker-location-details {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.marker-location-info {
+    display: flex;
+    flex-flow: column wrap;
+}
