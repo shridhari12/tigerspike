@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Collections.Generic;
+using TigerspikeCodeChallenge.Models;
 using TigerspikeDatabase.Models;
 
 namespace TigerspikeCodeChallenge.Repositories
@@ -15,5 +16,6 @@ namespace TigerspikeCodeChallenge.Repositories
 
         void DeleteUserLocation(string userId, string locationId);
         List<UserLocation> GetUserLocations(string userId);
+        IReadOnlyList<SearchUserLocationNotesResult> SearchUserLocationNotes(string userId, string searchNoteText);
     }
 }

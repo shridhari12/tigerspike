@@ -18,7 +18,6 @@ export class ManageUsersComponent implements OnInit {
   showUserInfo = false;
   showAddLocation = false;
   currentLocation: Marker;
-  // isCurrentLocationVisible = false;
   constructor(
     private userService: UserService
   ) { }
@@ -118,7 +117,6 @@ export class ManageUsersComponent implements OnInit {
     const userFullName = `${this.selectedUser.firstName} ${this.selectedUser.lastName}`;
     this.userMapData.username = userFullName;
     this.userMapData.dataPoints = [{...this.currentLocation}];
-    // this.userMapData.dataPoints.push(this.currentLocation);
   }
 
   getCurrentLocation(): void {
@@ -328,7 +326,6 @@ export class ManageUsersComponent implements OnInit {
          mp => mp.userId === marker.userId
          && mp.locationId === marker.locationId);
          const mapDataPoints = this.userMapData.dataPoints.filter(dp => dp.userId === marker.userId && dp.locationId !== marker.locationId);
-       //this.userMapData.dataPoints.splice(deletedLocationIndex, 1);
        this.userMapData = {
          username: this.userMapData.username,
          dataPoints: [...mapDataPoints]

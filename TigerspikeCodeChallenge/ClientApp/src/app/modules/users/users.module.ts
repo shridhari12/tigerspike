@@ -9,13 +9,15 @@ import { MapModule } from '../map/map.module';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SearchNotesComponent } from './components/search-notes/search-notes.component';
 
 
 @NgModule({
   declarations: [
     AddUserLocationComponent,
     ManageUsersComponent,
-    AddUserLocationNotesComponent
+    AddUserLocationNotesComponent,
+    SearchNotesComponent
   ],
   providers: [],
   imports: [

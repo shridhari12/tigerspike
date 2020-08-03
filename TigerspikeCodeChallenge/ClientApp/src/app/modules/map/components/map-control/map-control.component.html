@@ -3,8 +3,8 @@
     <div class="map-control-container">
         <div class="map-control-details">
             <agm-map
-             [latitude]="lat"
-             [longitude]="lng"
+             [latitude]="defaultLat"
+             [longitude]="defaultLng"
              [zoom]="zoom"
              (mapClick)="mapClickHandler($event)"
              [disableDefaultUI]="false"
@@ -21,10 +21,7 @@
              <div>
                 <p>{{ marker | json }}</p>
             </div>
-                <agm-info-window
-                 [isOpen]="isInfoWindowOpen(marker.id)"
-                 [latitude]="marker.lat"
-                 [longitude]="marker.lng">
+                <agm-info-window>
                     <strong>
                         Notes: {{ marker.notes }}
                     </strong>
@@ -34,7 +31,6 @@
         </div>
         <div class="map-marker-actions" *ngIf="showMarkerOptions">
             <div class="marker-location-details">
-                <p>Selected Marker ==> {{ selectedMarker | json}}</p>
                 <h4>Location Details</h4>
                 <div class="marker-location-info">
                     <mat-label><strong>Latitude: {{ selectedMarker.lat }}</strong></mat-label>

@@ -9,8 +9,6 @@
         <div class="show-note" *ngIf="showNote">
             <form [formGroup]="addNoteForm" (ngSubmit)="saveNoteHandler()" class="form">
                 <div class="form-element">
-                    <!-- <label for="notes">Notes</label>
-                                        <input type = "text" name = "notes" placeholder = "Please enter the notes here" id="notes" formControlName="notes" > -->
                     <mat-form-field class="form-element" hintLabel="Max 120 characters">
                         <mat-label>Notes *</mat-label>
                         <input matInput #input placeholder="Enter notes here" formControlName="notes">

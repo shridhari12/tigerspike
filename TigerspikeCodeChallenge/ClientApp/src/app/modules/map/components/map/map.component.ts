@@ -8,7 +8,6 @@ import { Marker } from '../../models/marker.model';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  // @Input() showMap = false;
   @Input() mapData: MapData;
   @Output() mapClick = new EventEmitter<Marker>();
   @Output() mapPointDelete = new EventEmitter<Marker>();
@@ -21,37 +20,16 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.getCurrentGeoPosition();
-    // this.buildAddNoteForm();
     this.showMapPoints();
   }
 
-  // buildAddNoteForm() {
-  //   this.addNoteForm = this.formBuilder.group({
-  //     notes: new FormControl('')
-  //   });
-  // }
-
   showMapPoints() {
-    // this.getCurrentGeoPosition();
     this.mapDataPoints = [ ...this.mapData.dataPoints ];
   }
-
-  // showMapComponent() {
-  //   this.showMap = !this.showMap;
-  // }
 
   addNote() {
     this.showNote = !this.showNote;
   }
-
-  // saveNoteHandler() {
-  //   this.saveNotesforCurrentLocation();
-  // }
-
-  // saveNotesforCurrentLocation() {
-  //   const notes = this.addNoteForm.get('notes').value;
-  // }
 
   mapPointClickHandler(marker: Marker) {
     console.log('[map][mapPointClickHandler] ', marker);

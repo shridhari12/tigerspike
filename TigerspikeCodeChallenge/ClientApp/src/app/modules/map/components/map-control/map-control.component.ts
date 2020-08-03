@@ -22,6 +22,8 @@ export class MapControlComponent implements OnInit, AfterViewInit {
   addNoteForm: FormGroup;
   selectedMarker: Marker;
   noteButtonText: string;
+  defaultLat: number;
+  defaultLng: number;
   constructor(
     private formBuilder: FormBuilder
   ) { }
@@ -45,6 +47,13 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     this.mapPoints.map((mapPoint, i) => {
       this.addMapMarker(mapPoint);
     });
+    this.setDefaultLocation();
+  }
+
+  setDefaultLocation() {
+    const defaultMarker = this.mapPoints[0];
+    this.defaultLat = defaultMarker.lat;
+    this.defaultLng = defaultMarker.lng;
   }
 
   markerClickHandler(marker: Marker) {
@@ -75,10 +84,6 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     } else {
       this.noteButtonText = 'ADD NOTES';
     }
-  }
-
-  isInfoWindowOpen(markerId: number) {
-    console.log('[isInfoWindowOpen][marker.id] ', markerId);
   }
 
   mapClickHandler(event: MouseEvent) {
