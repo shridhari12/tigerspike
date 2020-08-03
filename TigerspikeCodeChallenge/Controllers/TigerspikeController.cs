@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -34,6 +35,44 @@ namespace TigerspikeCodeChallenge.Controllers
         {
             var users = _repository.GetAllUsers();
             return Ok(users);
+        }
+
+        [HttpGet]
+        [Route("getuserlocations/{userId}/")]
+        public IActionResult GetUserLocations(string userId)
+        {
+            GetUserLocationsResponse userLocationsResponse = new GetUserLocationsResponse();
+            try
+            {
+                var userLocations = _repository.GetUserLocations(userId);
+                userLocationsResponse.IsSuccess = true;
+                userLocationsResponse.Locations = userLocations;
+                return Ok(userLocations);
+            }
+            catch (ArgumentNullException ae)
+            {
+                _logger.LogError("[TigerspikeController][GetUserLocations] [ArgumentNullException]");
+                _logger.LogError(ae.Message);
+                _logger.LogError(ae.StackTrace);
+                userLocationsResponse.IsSuccess = false;
+                return new BadRequestObjectResult(userLocationsResponse);
+            }
+            catch (KeyNotFoundException ke)
+            {
+                _logger.LogError("[TigerspikeController][GetUserLocations] [KeyNotFoundException]");
+                _logger.LogError(ke.Message);
+                _logger.LogError(ke.StackTrace);
+                userLocationsResponse.IsSuccess = false;
+                return new NotFoundObjectResult(userLocationsResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[TigerspikeController][GetUserLocations] Error encountered");
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
+                userLocationsResponse.IsSuccess = false;
+                return new BadRequestObjectResult(userLocationsResponse);
+            }
         }
 
         
@@ -120,9 +159,44 @@ namespace TigerspikeCodeChallenge.Controllers
         }
 
         // DELETE api/<TigerspikeController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [Route("deleteuserlocation/{userId}/{locationId}")]
+        public IActionResult Delete(string userId, string locationId)
         {
+            DeleteUserLocationResponse deleteUserLocationResponse = new DeleteUserLocationResponse(); 
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new ValidationException("Invalid input provided");
+                }
+                _repository.DeleteUserLocation(userId, locationId);
+                deleteUserLocationResponse.IsSuccess = true;
+                return Ok(deleteUserLocationResponse);
+            }
+            catch (ArgumentNullException ae)
+            {
+                _logger.LogError("[TigerspikeController][DeleteUserLocation] [ArgumentNullException]");
+                _logger.LogError(ae.Message);
+                _logger.LogError(ae.StackTrace);
+                deleteUserLocationResponse.IsSuccess = false;
+                return new BadRequestObjectResult(deleteUserLocationResponse);
+            }
+            catch (KeyNotFoundException ke)
+            {
+                _logger.LogError("[TigerspikeController][DeleteUserLocation] [KeyNotFoundException]");
+                _logger.LogError(ke.Message);
+                _logger.LogError(ke.StackTrace);
+                deleteUserLocationResponse.IsSuccess = false;
+                return new NotFoundObjectResult(deleteUserLocationResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[TigerspikeController][DeleteUserLocation] Error encountered");
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
+                return new BadRequestObjectResult(deleteUserLocationResponse);
+            }
         }
     }
 }

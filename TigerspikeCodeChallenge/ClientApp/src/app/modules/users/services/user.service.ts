@@ -4,8 +4,13 @@ import { UserInfo } from '../models/user-info.model';
 import { Position } from '../../map/models/position.model';
 import { UserLocation } from '../models/user-location.model';
 import { AddUserLocationNotes } from '../models/add-user-location-notes.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AddUserLocation } from '../models/add-user-location.model';
+import { MOCK_STATES } from '../models/mock-states.model';
+import { State } from '../models/state.model';
+import { Country } from '../models/country.model';
+import { MOCK_COUNTRIES } from '../models/mock-countries.model';
+import { DeleteUserLocation } from '../models/delete-user-location.model';
 
 const BASE_URL = 'https://localhost:5001/api/tigerspike';
 
@@ -18,6 +23,10 @@ export class UserService {
 
   getAllUsers(): Observable<Array<UserInfo>> {
     return this.http.get<Array<UserInfo>>(`${BASE_URL}/users`);
+  }
+
+  getUserLocations(userId: string): Observable<Array<UserLocation>> {
+    return this.http.get<Array<UserLocation>>(`${BASE_URL}/getuserlocations/${userId}`);
   }
 
   saveUserLocation(userId: string, locationId: string, addressLine1: string, addressLine2: string,
@@ -47,25 +56,9 @@ export class UserService {
       return this.http.post<UserLocation>(`${BASE_URL}/saveuserlocation`, body, { headers });
   }
 
-  getCoordinatesForAddress(address: string): Position {
-    let result, geodata;
-    this.http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' +
-    address + '&key=AIzaSyASYMYaEz7tZHZ_Q5L8QJpi56cxQeGNTSE')
-    .subscribe(
-      response => {
-        if (response && response.hasOwnProperty('results')) {
-          result = response['results'];
-          geodata = result[0].geometry; // location.lat
-        }
-      },
-      (error) => {
-        console.log('Request failed with error ', error);
-      });
-      const pos: Position = {
-        latitude: geodata.hasOwnProperty('latitude') ? geodata.latitude : 0,
-        longitude: geodata.hasOwnProperty('longitude') ? geodata.longitude : 0
-      };
-      return pos;
+  getCoordinatesForAddress(address: string): Observable<any> {
+    return this.http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' +
+    address + '&key=AIzaSyASYMYaEz7tZHZ_Q5L8QJpi56cxQeGNTSE');
   }
 
   saveUserLocationNotes(userId: string, locationId: string, notes: string): Observable<UserLocation> {
@@ -85,6 +78,27 @@ export class UserService {
   getAddressFromCoordinates(latitude: number, longitude: number): Observable<any> {
     return this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=
       ${latitude},${longitude}&sensor=false&key=AIzaSyASYMYaEz7tZHZ_Q5L8QJpi56cxQeGNTSE`);
+  }
+
+  getStates(): Observable<Array<State>> {
+    return of(MOCK_STATES);
+  }
+
+  getCountries(): Observable<Array<Country>> {
+    return of(MOCK_COUNTRIES);
+  }
+
+  deleteUserLocation(userId: string, locationId: string): Observable<any> {
+    // const params =  {
+    //   userId: userId,
+    //   locationId: locationId
+    // };
+    const headers = new HttpHeaders(
+      {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD'
+      });
+    return this.http.delete(`${BASE_URL}/deleteuserlocation/${userId}/${locationId}`, { headers });
   }
 
 }

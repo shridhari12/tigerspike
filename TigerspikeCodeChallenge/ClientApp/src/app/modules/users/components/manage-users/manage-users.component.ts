@@ -4,6 +4,7 @@ import { UserInfo } from '../../models/user-info.model';
 import { Marker } from 'src/app/modules/map/models/marker.model';
 import { MapData } from 'src/app/modules/map/models/map-data.model';
 import { UserLocation } from '../../models/user-location.model';
+import { AddUserLocation } from '../../models/add-user-location.model';
 
 @Component({
   selector: 'app-manage-users',
@@ -11,9 +12,8 @@ import { UserLocation } from '../../models/user-location.model';
   styleUrls: ['./manage-users.component.css']
 })
 export class ManageUsersComponent implements OnInit {
-  showMapLocations = false;
   users: Array<UserInfo>;
-  userMapData: MapData = { username: '', dataPoints: [] };
+  userMapData: MapData = { username: '', dataPoints: []};
   selectedUser: UserInfo;
   showUserInfo = false;
   showAddLocation = false;
@@ -60,43 +60,54 @@ export class ManageUsersComponent implements OnInit {
   showUserDetails(user: UserInfo) {
     this.selectedUser = { ...user };
     this.showUserInfo = !this.showUserInfo;
-    this.mapUserInfoToMarker();
+    this.getUserLocations();
+  }
+
+  getUserLocations() {
+    this.userService.getUserLocations(this.selectedUser.id)
+     .subscribe(locations => {
+       this.selectedUser = {
+         ...this.selectedUser,
+         locations: locations
+       };
+       this.mapUserInfoToMarker();
+     });
   }
 
   mapUserInfoToMarker() {
     const userFullName = `${this.selectedUser.firstName} ${this.selectedUser.lastName}`;
-    this.userMapData.username = userFullName;
-    this.userMapData.dataPoints = this.selectedUser.locations.map<Marker>((loc, index) => {
-        const markerLabel = `${userFullName} Location# ${index}`;
-        return {
+    const mapDataPoints = this.selectedUser.locations.map<Marker>((loc, index) => {
+      const markerLabel = `${userFullName} Location# ${index}`;
+      return {
+        userId: loc.userId,
+        locationId: loc.id,
+        lat: loc.latitude,
+        lng: loc.longitude,
+        label: markerLabel,
+        draggable: false,
+        notes: loc.notes,
+        address: {
           userId: loc.userId,
-          locationId: loc.id,
-          lat: loc.latitude,
-          lng: loc.longitude,
-          label: markerLabel,
-          draggable: false,
-          notes: loc.notes,
-          address: {
-            userId: loc.userId,
-            addressLine1: loc.addressLine1,
-            addressLine2: loc.addressLine2,
-            suburb: loc.suburb,
-            city: loc.city,
-            state: loc.state,
-            country: loc.country,
-            postcode: loc.postcode,
-            latitude: loc.latitude,
-            longitude: loc.longitude,
-            isCurrent: loc.isCurrent,
-            notes: loc.notes
-          },
-          isCurrentLocation: loc.isCurrent
-        };
-      });
-  }
-
-  showLocationsHandler() {
-    this.showMapLocations = !this.showMapLocations;
+          addressLine1: loc.addressLine1,
+          addressLine2: loc.addressLine2,
+          suburb: loc.suburb,
+          city: loc.city,
+          state: loc.state,
+          country: loc.country,
+          postcode: loc.postcode,
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          isCurrent: loc.isCurrent,
+          notes: loc.notes
+        },
+        isCurrentLocation: loc.isCurrent
+      };
+    });
+    const mapData: MapData = {
+      username: userFullName,
+      dataPoints: mapDataPoints
+    };
+    this.userMapData = {...mapData};
   }
 
   showCurrentLocation(user: UserInfo) {
@@ -162,7 +173,8 @@ export class ManageUsersComponent implements OnInit {
       });
   }
 
-  addLocationHandler() {
+  addLocationHandler(user: UserInfo) {
+    this.selectedUser = {...user};
     this.showAddLocation = !this.showAddLocation;
   }
 
@@ -259,7 +271,7 @@ export class ManageUsersComponent implements OnInit {
       const currentDataPoint = this.userMapData.dataPoints[index];
       const updatedDataPoint = {
         locationId: location.id,
-        notes: 'CURRENTLOCATION',
+        notes: location.notes,
         ...currentDataPoint
       };
       this.userMapData.dataPoints = [{...updatedDataPoint}];
@@ -267,8 +279,61 @@ export class ManageUsersComponent implements OnInit {
       const index = this.userMapData.dataPoints
       .findIndex(dp => dp.userId === location.userId
        && dp.locationId === location.id);
-     this.userMapData.dataPoints[index].notes = location.notes;
+       if (index === -1) {// Newly added UserLocation
+
+       } else if (index > 0) {// Update existing UserLocation
+        this.userMapData.dataPoints[index].notes = location.notes;
+       }
     }
+  }
+
+  addUserLocationHandler(userLocationToBeAdded: AddUserLocation) {
+    const userId = userLocationToBeAdded.userId;
+    const address1 = userLocationToBeAdded.addressLine1;
+    const address2 = userLocationToBeAdded.addressLine2;
+    const postcode = userLocationToBeAdded.postcode;
+    const suburb = userLocationToBeAdded.suburb;
+    const state = userLocationToBeAdded.state;
+    const city = userLocationToBeAdded.city;
+    const country = userLocationToBeAdded.country;
+    const latitude = userLocationToBeAdded.latitude;
+    const longitude = userLocationToBeAdded.longitude;
+    const isCurrent = userLocationToBeAdded.isCurrent;
+    const notes = userLocationToBeAdded.notes;
+
+    this.saveUserLocation(
+      userId,
+      null,
+      address1,
+      address2,
+      postcode,
+      suburb,
+      state,
+      city,
+      country,
+      latitude,
+      longitude,
+      isCurrent,
+      notes
+    );
+  }
+
+  mapPointDeleteHandler(marker: Marker) {
+    console.log('[map][mampPointDeleteHandler] ', marker);
+    this.userService.deleteUserLocation(marker.userId, marker.locationId)
+     .subscribe(deleteResponse => {
+       console.log('[map][mapPointDeleteHandler][deleteResponse] ', deleteResponse);
+       const deletedLocationIndex =
+        this.userMapData.dataPoints.findIndex(
+         mp => mp.userId === marker.userId
+         && mp.locationId === marker.locationId);
+         const mapDataPoints = this.userMapData.dataPoints.filter(dp => dp.userId === marker.userId && dp.locationId !== marker.locationId);
+       //this.userMapData.dataPoints.splice(deletedLocationIndex, 1);
+       this.userMapData = {
+         username: this.userMapData.username,
+         dataPoints: [...mapDataPoints]
+       };
+     });
   }
 
 }

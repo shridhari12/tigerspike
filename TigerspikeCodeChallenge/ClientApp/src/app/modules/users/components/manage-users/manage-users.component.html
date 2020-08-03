@@ -6,11 +6,11 @@
             <div class="details">
                 <strong>{{ user.firstName + ' ' + user.lastName }} location(s)</strong>
             </div>
-        </div>
-        <div class="action">
-            <button mat-raised-button color="primary" class="button" (click)="addLocationHandler()">ADD LOCATION</button>
-            <button mat-raised-button color="primary" class="button" (click)="showCurrentLocation(user)">SHOW CURRENT LOCATION</button>
-            <button mat-raised-button color="primary" class="button" (click)="showUserDetails(user)">SHOW USER LOCATIONS ON MAP</button>
+            <div class="user-map-actions">
+                <button mat-raised-button color="primary" class="button" (click)="addLocationHandler(user)">ADD LOCATION</button>
+                <button mat-raised-button color="primary" class="button" (click)="showCurrentLocation(user)">SHOW CURRENT LOCATION</button>
+                <button mat-raised-button color="primary" class="button" (click)="showUserDetails(user)">SHOW USER LOCATIONS ON MAP</button>
+            </div>
         </div>
     </div>
     <div class="user-info" *ngIf="showUserInfo">
@@ -18,18 +18,17 @@
             <div class="details-info">
                 <p>{{ user | json }}</p>
             </div>
-            <div class="action">
-                <button mat-raised-button color="primary" type="submit" 
-                 class="button" (click)="showLocationsHandler()">
-                    SHOW LOCATIONS
-                </button>
-            </div>
         </div>
-        <div class="user-locations">
-            <app-map [mapData]="userMapData" (mapClick)="mapClickHandler($event)"></app-map>
+        <div class="user-locations" *ngIf="userMapData.dataPoints.length > 0">
+            <app-map
+             [mapData]="userMapData" 
+             (mapClick)="mapClickHandler($event)"
+             (mapPointDelete)="mapPointDeleteHandler($event)"></app-map>
         </div>        
     </div>
     <div class="add-user-location" *ngIf="showAddLocation">
-        <app-add-user-location></app-add-user-location>
+        <app-add-user-location 
+         [selectedUser]="selectedUser"
+         (addLocation)="addUserLocationHandler($event)"></app-add-user-location>
     </div>
 </div>

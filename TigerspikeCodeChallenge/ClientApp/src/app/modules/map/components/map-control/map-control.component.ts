@@ -12,6 +12,7 @@ export class MapControlComponent implements OnInit, AfterViewInit {
   @ViewChild(AgmMap, {static: true}) map: AgmMap;
   @Input() mapPoints: Array<Marker>;
   @Output() mapPointClick = new EventEmitter<Marker>();
+  @Output() mapPointDelete = new EventEmitter<Marker>();
   showMarkerOptions = false;
   infoContent = '';
   mapTypeId = 'hybrid';
@@ -42,8 +43,6 @@ export class MapControlComponent implements OnInit, AfterViewInit {
 
   plotDataPointsInMap() {
     this.mapPoints.map((mapPoint, i) => {
-      // this.addMapMarker(mapPoint.userId, mapPoint.locationId, mapPoint.lat, 
-      //   mapPoint.lng, mapPoint.label, mapPoint.notes);
       this.addMapMarker(mapPoint);
     });
   }
@@ -54,7 +53,6 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     this.showMarkerOptions = !this.showMarkerOptions;
     this.selectedMarker = marker;
     this.setMarkerData();
-    // this.mapPointClick.emit(marker);
   }
 
   getSelectedMarkerAddress() {
@@ -92,16 +90,6 @@ export class MapControlComponent implements OnInit, AfterViewInit {
   }
 
   addMapMarker(marker: Marker) {
-    // const mapMarker: Marker = {
-    //   userId: userId,
-    //   locationId: locationId,
-    //   label: markerLabel,
-    //   lat: markerLat,
-    //   lng: markerLng,
-    //   draggable: false,
-    //   notes: notes
-    // };
-    // this.markers.push(mapMarker);
     this.markers.push({...marker});
     if (marker.isCurrentLocation) {
       this.addNote();
@@ -112,18 +100,6 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     this.showNote = !this.showNote;
   }
 
-  // saveNoteHandler() {
-  //   this.saveNotesforCurrentLocation();
-  // }
-
-  // saveNotesforCurrentLocation() {
-  //   const notes = this.addNoteForm.get('notes').value;
-  //   this.selectedMarker.notes = notes;
-  //   this.showNote = false;
-  //   this.showMarkerOptions = false;
-  //   this.mapPointClick.emit(this.selectedMarker);
-  // }
-
   saveCurrentLocationHandler() {
     console.log('[map-control][saveCurrentLocationHandler]');
     const notes = this.addNoteForm.get('notes').value;
@@ -131,6 +107,11 @@ export class MapControlComponent implements OnInit, AfterViewInit {
     this.showNote = false;
     this.showMarkerOptions = false;
     this.mapPointClick.emit(this.selectedMarker);
+  }
+
+  // Pass to Parent ==> MapComponent
+  deleteUserLocation() {
+    this.mapPointDelete.emit(this.selectedMarker);
   }
 
 }
