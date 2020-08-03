@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MapData } from '../../models/map-data.model';
 import { Marker } from '../../models/marker.model';
-
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -12,6 +11,7 @@ export class MapComponent implements OnInit {
   // @Input() showMap = false;
   @Input() mapData: MapData;
   @Output() mapClick = new EventEmitter<Marker>();
+  @Output() mapPointDelete = new EventEmitter<Marker>();
   mapDataPoints: Array<Marker> = [];
   showNote = false;
   addNoteForm: FormGroup;
@@ -56,6 +56,11 @@ export class MapComponent implements OnInit {
   mapPointClickHandler(marker: Marker) {
     console.log('[map][mapPointClickHandler] ', marker);
     this.mapClick.emit(marker);
+  }
+
+  // pass back to Parent ==> ManageUsersComponent
+  mapPointDeleteHandler(marker: Marker) {
+    this.mapPointDelete.emit(marker);
   }
 
 }

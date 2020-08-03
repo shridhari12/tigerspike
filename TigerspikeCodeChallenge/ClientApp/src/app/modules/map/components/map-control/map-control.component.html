@@ -36,18 +36,15 @@
             <div class="marker-location-details">
                 <p>Selected Marker ==> {{ selectedMarker | json}}</p>
                 <h4>Location Details</h4>
-                <!-- <strong>Latitude: {{ selectedMarker.lat }}</strong>
-                <strong>Longitude: {{ selectedMarker.lng }}</strong>
-                <strong>Address: {{ getSelectedMarkerAddress() }}</strong>
-                <strong>Please save the current location to be able to add notes</strong> -->
                 <div class="marker-location-info">
-                    <mat-label>Latitude: {{ selectedMarker.lat }}</mat-label>
-                    <mat-label>Longitude: {{ selectedMarker.lng }}</mat-label>
-                    <mat-label>Address: {{ getSelectedMarkerAddress() }}</mat-label>
+                    <mat-label><strong>Latitude: {{ selectedMarker.lat }}</strong></mat-label>
+                    <mat-label><strong>Longitude: {{ selectedMarker.lng }}</strong></mat-label>
+                    <mat-label><strong>Address: {{ getSelectedMarkerAddress() }}</strong></mat-label>
                 </div>
                 <div class="marker-location-notes">
                     <label>{{selectedMarker?.notes || 'No notes added. Please click below button to add it' }}</label>
                     <button mat-raised-button color="primary" class="button" *ngIf="!showNote" (click)="addNote()">{{noteButtonText}}</button>
+                    <button mat-raised-button color="primary" class="button" *ngIf="!showNote" (click)="deleteUserLocation()">DELETE LOCATION</button>
                     <div class="show-note" *ngIf="showNote">
                         <form [formGroup]="addNoteForm" (ngSubmit)="saveCurrentLocationHandler()" class="form">
                             <div class="form-element">
@@ -68,7 +65,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- <button mat-raised-button color="primary" class="button" (click)="saveCurrentLocationHandler()">SAVE CURRENT LOCATION</button> -->
             </div>
         </div>
     </div>

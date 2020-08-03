@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import { AddUserLocation } from '../../models/add-user-location.model';
 import { Country } from '../../models/country.model';
 import { State } from '../../models/state.model';
+import { UserInfo } from '../../models/user-info.model';
 
 @Component({
   selector: 'app-add-user-location',
@@ -12,17 +13,19 @@ import { State } from '../../models/state.model';
   styleUrls: ['./add-user-location.component.css']
 })
 export class AddUserLocationComponent implements OnInit {
-  @Input() isCurrent: boolean;
-  @Output() saveUserLocation = new EventEmitter<AddUserLocation>();
+  @Input() selectedUser: UserInfo;
+  @Output() addLocation = new EventEmitter<AddUserLocation>();
   userLocationForm: FormGroup;
-  countryOptions: Array<Country>;
-  stateOptions: Array<State>;
+  countryOptions: Array<Country> = [];
+  stateOptions: Array<State> = [];
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
     private userService: UserService) { }
 
   ngOnInit() {
+    this.loadStates();
+    this.loadCountries();
     this.buildLocationForm();
   }
 
@@ -32,8 +35,10 @@ export class AddUserLocationComponent implements OnInit {
       addressLine2: new FormControl(''),
       suburb: new FormControl(''),
       state: new FormControl(''),
+      city: new FormControl(''),
       postcode: new FormControl(''),
       country: new FormControl(''),
+      notes: new FormControl('')
     });
   }
 
@@ -44,76 +49,65 @@ export class AddUserLocationComponent implements OnInit {
     const state: string = this.userLocationForm.get('state').value;
     const postcode: string = this.userLocationForm.get('postcode').value;
     const country: string = this.userLocationForm.get('country').value;
+    const city: string = this.userLocationForm.get('city').value;
     const address = `${address1} ${address2} ${suburb} ${state} ${country} ${postcode}`;
-    this.getGeoLocation(address);
+    const notes: string = this.userLocationForm.get('notes').value;
+    let result, geodata, lat, lng;
+    this.userService.getCoordinatesForAddress(address)
+      .subscribe(
+        response => {
+          if (response && response.hasOwnProperty('results')) {
+            result = response['results'];
+            geodata = result[0].geometry.location; // location.lat
+            lat = geodata.hasOwnProperty('lat') ? geodata.lat : 0;
+            lng = geodata.hasOwnProperty('lng') ? geodata.lng : 0;
+
+            // Save the location to backend
+            this.saveLocation(address1, address2, suburb,
+              state, postcode, country, city, lat, lng, notes);
+          }
+        },
+        (error) => {
+          console.log('Request failed with error ', error);
+        });
   }
 
   loadCountries() {
-    // this.countryOptions = this.acmeOfferSvc.getCountries();
-    this.countryOptions = [
-      {
-        countryId: 1,
-        countryCode: 'AU',
-        countryName: 'Australia'
-      },
-      {
-        countryId: 2,
-        countryCode: 'IND',
-        countryName: 'India'
-      },
-      {
-        countryId: 3,
-        countryCode: 'USA',
-        countryName: 'United States of America'
-      }
-    ];
+    this.userService.getCountries()
+      .subscribe(countries => this.countryOptions = countries);
   }
 
   loadStates() {
-    this.stateOptions = [
-      {
-        stateCode: 'QLD',
-        stateName: 'Queensland'
-      },
-      {
-        stateCode: 'TAS',
-        stateName: 'Tasmania'
-      },
-      {
-        stateCode: 'NT',
-        stateName: 'Northern Territory'
-      },
-      {
-        stateCode: 'VIC',
-        stateName: 'Victoria'
-      },
-      {
-        stateCode: 'ACT',
-        stateName: 'Australian Capital Territory'
-      },
-      {
-        stateCode: 'SA',
-        stateName: 'South Australia'
-      },
-      {
-        stateCode: 'NSW',
-        stateName: 'New South Wales'
-      },
-      {
-        stateCode: 'WA',
-        stateName: 'Western Australia'
-      }
-    ];
+    this.userService.getStates()
+      .subscribe(states => this.stateOptions = states);
   }
 
-  getGeoLocation(address: string) {
-    console.log('Getting address: ', address);
-    // this.apiLoader.load().then(() => {
-    //   let geocoder = new google.maps.Geocoder;
-    // })
-    // this.userService.saveUserLocation();
+  saveLocation(
+    address1: string,
+    address2: string,
+    suburb: string,
+    state: string,
+    postcode: string,
+    country: string,
+    city: string,
+    latitude: number,
+    longitude: number,
+    notes: string) {
+    const userLocationToBeAdded: AddUserLocation = {
+      userId: this.selectedUser.id,
+      addressLine1: address1.trim(),
+      addressLine2: address2.trim(),
+      postcode: postcode.trim(),
+      suburb: suburb.trim(),
+      state: state.trim(),
+      country: country.trim(),
+      city: city.trim(),
+      latitude: latitude,
+      longitude: longitude,
+      isCurrent: false,
+      notes: notes.trim()
+    };
+    this.addLocation.emit(userLocationToBeAdded);
   }
-
-
 
 }

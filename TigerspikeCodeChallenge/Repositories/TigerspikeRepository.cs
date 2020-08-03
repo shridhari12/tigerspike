@@ -18,10 +18,12 @@ namespace TigerspikeCodeChallenge.Repositories
 
         public List<UserInfo> GetAllUsers()
         {
-            return _context.Users
-                    .Include(b => b.Locations)
-                    //.Where(u => !u.Locations.Any(l => l.isCurrent == true))
-                    .ToList();
+            return _context.Users.ToList();
+        }
+
+        public List<UserLocation> GetUserLocations(string userId)
+        {
+            return _context.UserLocations.Where(ul => ul.UserId == userId && ul.isCurrent == false).ToList();
         }
 
         public UserLocation SaveNotesForUserLocation(string userId, string locationId, string notes)
@@ -105,5 +107,26 @@ namespace TigerspikeCodeChallenge.Repositories
             }
             
         }
+
+        public void DeleteUserLocation(string userId, string locationId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException("UserId cannot be null");
+            }
+            if (string.IsNullOrEmpty(locationId))
+            {
+                throw new ArgumentNullException("UserId cannot be null");
+            }
+            var userLocation = _context.UserLocations.FirstOrDefault(ul => ul.UserId == userId
+                                 && ul.Id == locationId);
+            if (userLocation == null)
+            {
+                throw new KeyNotFoundException("Unable to find the user location record to be deleted");
+            }
+            _context.UserLocations.Remove(userLocation);
+            _context.SaveChanges();
+        }
+
     }
 }
