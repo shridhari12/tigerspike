@@ -51,9 +51,11 @@ export class MapControlComponent implements OnInit, AfterViewInit {
   }
 
   setDefaultLocation() {
-    const defaultMarker = this.mapPoints[0];
-    this.defaultLat = defaultMarker.lat;
-    this.defaultLng = defaultMarker.lng;
+    if (this.mapPoints && this.mapPoints.length > 0) {
+      const defaultMarker = this.mapPoints[0];
+      this.defaultLat = defaultMarker.lat;
+      this.defaultLng = defaultMarker.lng;
+    }
   }
 
   markerClickHandler(marker: Marker) {

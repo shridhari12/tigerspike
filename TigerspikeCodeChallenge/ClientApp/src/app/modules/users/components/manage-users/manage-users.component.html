@@ -17,7 +17,7 @@
                 
             </div>
         </div>
-        <div class="user-locations" *ngIf="userMapData.dataPoints.length > 0; else noMap">
+        <div class="user-locations" *ngIf="userMapData.dataPoints.length > 0; else noRecordsFound">
             <app-map
              [mapData]="userMapData" 
              (mapClick)="mapClickHandler($event)"
@@ -29,10 +29,10 @@
          [selectedUser]="selectedUser"
          (addLocation)="addUserLocationHandler($event)"></app-add-user-location>
     </div>
-    <ng-template>
-        <div #noMap class="no-map">
-            <p>There are no locations to be shown.</p>
-            <p>Please click on "ADD LOCATION" to add one.</p>
+    <ng-template #noRecordsFound>
+        <div class="no-records-found">
+            <p><strong>There are no records found</strong></p>
+            <p><strong>Please click on "ADD LOCATION" to add one</strong></p>
         </div>
     </ng-template>
 </div>

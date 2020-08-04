@@ -5,6 +5,7 @@ import { Marker } from 'src/app/modules/map/models/marker.model';
 import { MapData } from 'src/app/modules/map/models/map-data.model';
 import { UserLocation } from '../../models/user-location.model';
 import { AddUserLocation } from '../../models/add-user-location.model';
+import { LOCATION_INITIALIZED } from '@angular/common';
 
 @Component({
   selector: 'app-manage-users',
@@ -13,7 +14,7 @@ import { AddUserLocation } from '../../models/add-user-location.model';
 })
 export class ManageUsersComponent implements OnInit {
   users: Array<UserInfo>;
-  userMapData: MapData = { username: '', dataPoints: []};
+  userMapData: MapData = { username: '', dataPoints: [] };
   selectedUser: UserInfo;
   showUserInfo = false;
   showAddLocation = false;
@@ -29,13 +30,13 @@ export class ManageUsersComponent implements OnInit {
 
   getAllUsers() {
     this.userService.getAllUsers()
-     .subscribe(
-       data => {
-         this.users = data;
-       },
-       (error) => {
-         console.log('Request failed with error ', error);
-       });
+      .subscribe(
+        data => {
+          this.users = data;
+        },
+        (error) => {
+          console.log('Request failed with error ', error);
+        });
   }
 
   mapToMarker(data: Array<UserInfo>) {
@@ -64,13 +65,13 @@ export class ManageUsersComponent implements OnInit {
 
   getUserLocations() {
     this.userService.getUserLocations(this.selectedUser.id)
-     .subscribe(locations => {
-       this.selectedUser = {
-         ...this.selectedUser,
-         locations: locations
-       };
-       this.mapUserInfoToMarker();
-     });
+      .subscribe(locations => {
+        this.selectedUser = {
+          ...this.selectedUser,
+          locations: locations
+        };
+        this.mapUserInfoToMarker();
+      });
   }
 
   mapUserInfoToMarker() {
@@ -106,7 +107,7 @@ export class ManageUsersComponent implements OnInit {
       username: userFullName,
       dataPoints: mapDataPoints
     };
-    this.userMapData = {...mapData};
+    this.userMapData = { ...mapData };
   }
 
   showCurrentLocation(user: UserInfo) {
@@ -116,34 +117,34 @@ export class ManageUsersComponent implements OnInit {
     // plot the current location in the map
     const userFullName = `${this.selectedUser.firstName} ${this.selectedUser.lastName}`;
     this.userMapData.username = userFullName;
-    this.userMapData.dataPoints = [{...this.currentLocation}];
+    this.userMapData.dataPoints = [{ ...this.currentLocation }];
   }
 
   getCurrentLocation(): void {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((pos) => {
-          if (pos) {
-            this.getAddressFromCurrentLocationCoords(
-              pos.coords.latitude,
-              pos.coords.longitude);
-          }
-        },
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        if (pos) {
+          this.getAddressFromCurrentLocationCoords(
+            pos.coords.latitude,
+            pos.coords.longitude);
+        }
+      },
         (error) => {
           throw error;
         });
-      }
+    }
   }
 
   getAddressFromCurrentLocationCoords(latitude: number, longitude: number) {
     let result: Array<any> = [];
-      let address: string;
-      this.userService.getAddressFromCoordinates(latitude, longitude)
-       .subscribe(response => {
-       if (response && response.hasOwnProperty('results')) {
-         result = response['results'];
-         address = result[0].formatted_address; // location.lat
-         const [ address1, address2, suburb, city, postcode, state, country ] = this.extractAddressComponents(address);
-         this.currentLocation = {
+    let address: string;
+    this.userService.getAddressFromCoordinates(latitude, longitude)
+      .subscribe(response => {
+        if (response && response.hasOwnProperty('results')) {
+          result = response['results'];
+          address = result[0].formatted_address; // location.lat
+          const [address1, address2, suburb, city, postcode, state, country] = this.extractAddressComponents(address);
+          this.currentLocation = {
             lat: latitude,
             lng: longitude,
             address: {
@@ -164,35 +165,35 @@ export class ManageUsersComponent implements OnInit {
             draggable: false,
             isCurrentLocation: true
           };
-       }
+        }
       },
-      (error) => {
-        console.log('Request failed with error ', error);
-      });
+        (error) => {
+          console.log('Request failed with error ', error);
+        });
   }
 
   addLocationHandler(user: UserInfo) {
-    this.selectedUser = {...user};
+    this.selectedUser = { ...user };
     this.showAddLocation = !this.showAddLocation;
   }
 
   mapClickHandler(marker: Marker) {
     console.log('[manage-users][mapLocationClick] ', marker);
-      this.saveUserLocation(
-        marker.userId,
-        marker.locationId,
-        marker.address.addressLine1,
-        marker.address.addressLine2,
-        marker.address.postcode,
-        marker.address.suburb,
-        marker.address.state,
-        marker.address.city,
-        marker.address.country,
-        marker.lat,
-        marker.lng,
-        marker.isCurrentLocation,
-        marker.notes
-       );
+    this.saveUserLocation(
+      marker.userId,
+      marker.locationId,
+      marker.address.addressLine1,
+      marker.address.addressLine2,
+      marker.address.postcode,
+      marker.address.suburb,
+      marker.address.state,
+      marker.address.city,
+      marker.address.country,
+      marker.lat,
+      marker.lng,
+      marker.isCurrentLocation,
+      marker.notes
+    );
   }
 
   extractAddressComponents(address: string): Array<string> {
@@ -203,13 +204,13 @@ export class ManageUsersComponent implements OnInit {
     const cityCountry = addressComponents[2].trim().split(' ') || null;
     let suburb, state, postcode;
     if (suburbStatePostcode.length % 4 === 0) {
-     suburb = `${suburbStatePostcode[0]} ${suburbStatePostcode[1]}`;
-     state = suburbStatePostcode[2];
-     postcode = suburbStatePostcode[3];
+      suburb = `${suburbStatePostcode[0]} ${suburbStatePostcode[1]}`;
+      state = suburbStatePostcode[2];
+      postcode = suburbStatePostcode[3];
     } else if (suburbStatePostcode.length % 3 === 0) {
-     suburb = suburbStatePostcode[0];
-     state = suburbStatePostcode[1];
-     postcode = suburbStatePostcode[2];
+      suburb = suburbStatePostcode[0];
+      state = suburbStatePostcode[1];
+      postcode = suburbStatePostcode[2];
     }
     const city = ''; // cityCountry[0].trim();
     const country = cityCountry[0].trim();
@@ -255,9 +256,9 @@ export class ManageUsersComponent implements OnInit {
       .subscribe(data => {
         this.updateMapData(data);
       },
-      error => {
-        console.log('[manage-users][saveUserLocationNotes][error] ', error);
-      });
+        error => {
+          console.log('[manage-users][saveUserLocationNotes][error] ', error);
+        });
   }
 
   updateMapData(location: UserLocation) {
@@ -265,23 +266,48 @@ export class ManageUsersComponent implements OnInit {
     if (location && location.isCurrent) {
       const index = this.userMapData.dataPoints.findIndex(
         dp => dp.userId === location.userId
-        && dp.isCurrentLocation === true);
+          && dp.isCurrentLocation === true);
       const currentDataPoint = this.userMapData.dataPoints[index];
       const updatedDataPoint = {
         locationId: location.id,
         notes: location.notes,
         ...currentDataPoint
       };
-      this.userMapData.dataPoints = [{...updatedDataPoint}];
+      this.userMapData.dataPoints = [{ ...updatedDataPoint }];
     } else {
       const index = this.userMapData.dataPoints
-      .findIndex(dp => dp.userId === location.userId
-       && dp.locationId === location.id);
-       if (index === -1) {// Newly added UserLocation
-
-       } else if (index > 0) {// Update existing UserLocation
+        .findIndex(dp => dp.userId === location.userId
+          && dp.locationId === location.id);
+      if (index === -1) {// Newly added UserLocation
+        const newDataPoint: Marker = {
+          userId: location.userId,
+          locationId: location.id,
+          lat: location.latitude,
+          lng: location.longitude,
+          draggable: false,
+          notes: location.notes,
+          address: {
+            userId: location.userId,
+            locationId: location.id,
+            addressLine1: location.addressLine1,
+            addressLine2: location.addressLine2,
+            postcode: location.postcode,
+            suburb: location.suburb,
+            state: location.state,
+            city: location.city,
+            country: location.country,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            isCurrent: location.isCurrent,
+            notes: location.notes
+          },
+          isCurrentLocation: location.isCurrent
+        };
+        this.userMapData.dataPoints = [{ ...newDataPoint }];
+        this.showAddLocation = !this.showAddLocation;
+      } else if (index > 0) {// Update existing UserLocation
         this.userMapData.dataPoints[index].notes = location.notes;
-       }
+      }
     }
   }
 
@@ -319,18 +345,18 @@ export class ManageUsersComponent implements OnInit {
   mapPointDeleteHandler(marker: Marker) {
     console.log('[map][mampPointDeleteHandler] ', marker);
     this.userService.deleteUserLocation(marker.userId, marker.locationId)
-     .subscribe(deleteResponse => {
-       console.log('[map][mapPointDeleteHandler][deleteResponse] ', deleteResponse);
-       const deletedLocationIndex =
-        this.userMapData.dataPoints.findIndex(
-         mp => mp.userId === marker.userId
-         && mp.locationId === marker.locationId);
-         const mapDataPoints = this.userMapData.dataPoints.filter(dp => dp.userId === marker.userId && dp.locationId !== marker.locationId);
-       this.userMapData = {
-         username: this.userMapData.username,
-         dataPoints: [...mapDataPoints]
-       };
-     });
+      .subscribe(deleteResponse => {
+        console.log('[map][mapPointDeleteHandler][deleteResponse] ', deleteResponse);
+        const deletedLocationIndex =
+          this.userMapData.dataPoints.findIndex(
+            mp => mp.userId === marker.userId
+              && mp.locationId === marker.locationId);
+        const mapDataPoints = this.userMapData.dataPoints.filter(dp => dp.userId === marker.userId && dp.locationId !== marker.locationId);
+        this.userMapData = {
+          username: this.userMapData.username,
+          dataPoints: [...mapDataPoints]
+        };
+      });
   }
 
 }
