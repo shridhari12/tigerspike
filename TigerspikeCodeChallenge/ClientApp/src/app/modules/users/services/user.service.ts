@@ -11,6 +11,8 @@ import { State } from '../models/state.model';
 import { Country } from '../models/country.model';
 import { MOCK_COUNTRIES } from '../models/mock-countries.model';
 import { DeleteUserLocation } from '../models/delete-user-location.model';
+import { SearchNotes } from '../models/search-notes.model';
+import { SearchNotesResult } from '../models/search-notes-result.model';
 
 const BASE_URL = 'https://localhost:5001/api/tigerspike';
 
@@ -89,16 +91,25 @@ export class UserService {
   }
 
   deleteUserLocation(userId: string, locationId: string): Observable<any> {
-    // const params =  {
-    //   userId: userId,
-    //   locationId: locationId
-    // };
     const headers = new HttpHeaders(
       {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD'
       });
     return this.http.delete(`${BASE_URL}/deleteuserlocation/${userId}/${locationId}`, { headers });
+  }
+
+  searchNotes(userId: string, searchNoteText: string): Observable<Array<SearchNotesResult>> {
+    const body: SearchNotes = {
+      userId: userId,
+      searchNoteText: searchNoteText
+    };
+    const headers = new HttpHeaders(
+      {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD'
+      });
+    return this.http.post<Array<SearchNotesResult>>(`${BASE_URL}/searchnotes`, body, {headers});
   }
 
 }

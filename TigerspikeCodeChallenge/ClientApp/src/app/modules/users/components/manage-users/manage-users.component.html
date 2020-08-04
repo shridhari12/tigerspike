@@ -1,6 +1,4 @@
 <div class="manage-users">
-    <p>Selected User {{ selectedUser | json }}</p>
-    <p>Current Location {{ currentLocation | json }}</p>
     <div class="show-users" *ngFor="let user of users">
         <div class="user-info">
             <div class="details">
@@ -16,10 +14,10 @@
     <div class="user-info" *ngIf="showUserInfo">
         <div class="user-details">
             <div class="details-info">
-                <p>{{ user | json }}</p>
+                
             </div>
         </div>
-        <div class="user-locations" *ngIf="userMapData.dataPoints.length > 0">
+        <div class="user-locations" *ngIf="userMapData.dataPoints.length > 0; else noRecordsFound">
             <app-map
              [mapData]="userMapData" 
              (mapClick)="mapClickHandler($event)"
@@ -31,4 +29,10 @@
          [selectedUser]="selectedUser"
          (addLocation)="addUserLocationHandler($event)"></app-add-user-location>
     </div>
+    <ng-template #noRecordsFound>
+        <div class="no-records-found">
+            <p><strong>There are no records found</strong></p>
+            <p><strong>Please click on "ADD LOCATION" to add one</strong></p>
+        </div>
+    </ng-template>
 </div>

@@ -14,6 +14,7 @@ import { MapComponent } from './modules/map/components/map/map.component';
 // import { AddUserLocationComponent } from './modules/users/components/add-user-location/add-user-location.component';
 import { UsersModule } from './modules/users/users.module';
 import { ManageUsersComponent } from './modules/users/components/manage-users/manage-users.component';
+import { SearchNotesComponent } from './modules/users/components/search-notes/search-notes.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { ManageUsersComponent } from './modules/users/components/manage-users/ma
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'show-map', component: MapComponent },
-      { path: 'manage-users', component: ManageUsersComponent }
+      { path: 'manage-users', component: ManageUsersComponent },
+      { path: 'search-notes', component: SearchNotesComponent }
     ])
   ],
   providers: [],

@@ -101,6 +101,45 @@ namespace TigerspikeCodeChallenge.Controllers
         }
 
         [HttpPost]
+        [Route("searchnotes")]
+        public IActionResult SearchNotes([FromBody] SearchUserLocationNotesModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new ValidationException("Input is invalid");
+                }
+                var userId = model?.UserId?.Trim();
+                var searchNoteText = model?.SearchNoteText?.Trim();
+                var userLocationNotes = _repository.SearchUserLocationNotes(userId, searchNoteText);
+                return Ok(userLocationNotes);
+            }
+            catch (ArgumentNullException ae)
+            {
+                _logger.LogError("[TigerspikeController][SearchNotes] [ArgumentNullException]");
+                _logger.LogError(ae.Message);
+                _logger.LogError(ae.StackTrace);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (KeyNotFoundException ke)
+            {
+                _logger.LogError("[TigerspikeController][SearchNotes] [KeyNotFoundException]");
+                _logger.LogError(ke.Message);
+                _logger.LogError(ke.StackTrace);
+                //deleteUserLocationResponse.IsSuccess = false;
+                return new NotFoundObjectResult(ke.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[TigerspikeController][SearchNotes] Error encountered");
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
+                return new BadRequestObjectResult(ModelState);
+            }
+        }
+
+        [HttpPost]
         [Route("saveuserlocation")]
         public IActionResult SaveUserLocation([FromBody] UserLocationAddModel model)
         {
